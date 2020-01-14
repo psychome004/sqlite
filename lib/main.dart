@@ -33,6 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Student student;
   List<Student> studList;
 
+  int updateIndex;
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -106,10 +108,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 IconButton(
                                   onPressed: () {
+                                    //Update employees
                                     _nameController.text = st.name;
                                     _courseController.text = st.course;
                                     student = st;
-                                  },
+                                    updateIndex = index;
+
+                                    },
                                   icon: Icon(
                                     Icons.edit,
                                     color: Colors.blueAccent,
@@ -117,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 IconButton(
                                   onPressed: () {
+                                    //Delete employees
                                     _dbManager.deleteStudent(st.id);
                                     setState(() {
                                       studList.removeAt(index);
@@ -153,6 +159,21 @@ class _MyHomePageState extends State<MyHomePage> {
           _nameController.clear();
           _courseController.clear();
           print('Student added to DB ${id}');
+        });
+      }
+      else{
+        student.name = _nameController.text;
+        student.course = _courseController.text;
+
+        setState(() {
+          studList[updateIndex].name = _nameController.text;
+          studList[updateIndex].course = _courseController.text;
+        });
+
+        _dbManager.updateStudent(student).then((id){
+          _nameController.clear();
+          _courseController.clear();
+          student = null;
         });
       }
     }
